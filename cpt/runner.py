@@ -13,11 +13,13 @@ class CreateRunner(object):
 
     def __init__(self, profile_abs_path, reference, conan_api, uploader, args=None,
                  exclude_vcvars_precommand=False, build_policy=None, runner=None,
-                 abs_folder=None, printer=None, upload=False, test_folder=None):
+                 abs_folder=None, printer=None, upload=False, upload_only_recipe=False,
+                 test_folder=None):
 
         self.printer = printer or Printer()
         self._abs_folder = abs_folder or os.getcwd()
         self._uploader = uploader
+        self._upload_only_recipe = upload_only_recipe
         self._upload = upload
         self._conan_api = conan_api
         self._profile_abs_path = profile_abs_path
@@ -73,7 +75,7 @@ class CreateRunner(object):
                                                profile_name=self._profile_abs_path,
                                                test_folder=self._test_folder)
 
-                self._uploader.upload_packages(self._reference, self._upload)
+                self._uploader.upload_packages(self._reference, self._upload, not self._upload_only_recipe)
 
 
 class DockerCreateRunner(object):
@@ -84,6 +86,7 @@ class DockerCreateRunner(object):
                  docker_image_skip_pull=False,
                  always_update_conan_in_docker=False,
                  upload=False, runner=None,
+                 upload_only_recipe=False,
                  docker_shell="", docker_conan_home="",
                  docker_platform_param="", lcow_user_workaround="",
                  test_folder=None):
@@ -91,6 +94,7 @@ class DockerCreateRunner(object):
         self.printer = Printer()
         self._args = args
         self._upload = upload
+        self._upload_only_recipe = upload_only_recipe
         self._reference = reference
         self._conan_pip_package = conan_pip_package
         self._build_policy = build_policy
@@ -209,6 +213,7 @@ class DockerCreateRunner(object):
         ret["CONAN_USERNAME"] = escape_env(self._reference.user)
         ret["CONAN_TEMP_TEST_FOLDER"] = "1"  # test package folder to a temp one
         ret["CPT_UPLOAD_ENABLED"] = self._upload
+        ret["CPT_UPLOAD_ONLY_RECIPE"] = self._upload_only_recipe
         ret["CPT_BUILD_POLICY"] = escape_env(self._build_policy)
         ret["CPT_TEST_FOLDER"] = escape_env(self._test_folder)
 

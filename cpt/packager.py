@@ -70,6 +70,7 @@ class ConanMultiPackager(object):
                  stable_channel=None,
                  platform_info=None,
                  upload_retry=None,
+                 upload_only_recipe=None,
                  clang_versions=None,
                  login_username=None,
                  upload_only_when_stable=None,
@@ -212,6 +213,11 @@ class ConanMultiPackager(object):
 
         # Upload related variables
         self.upload_retry = upload_retry or os.getenv("CONAN_UPLOAD_RETRY", 3)
+
+        if upload_only_recipe is not None:
+            self.upload_only_recipe = upload_only_recipe
+        else:
+            self.upload_only_recipe = get_bool_from_env("CONAN_UPLOAD_ONLY_RECIPE")
 
         if upload_only_when_stable is not None:
             self.upload_only_when_stable = upload_only_when_stable
@@ -449,6 +455,7 @@ class ConanMultiPackager(object):
                                  abs_folder=abs_folder,
                                  printer=self.printer,
                                  upload=self._upload_enabled(),
+                                 upload_only_recipe=self.upload_only_recipe,
                                  test_folder=self.test_folder)
                 r.run()
             else:
@@ -464,6 +471,7 @@ class ConanMultiPackager(object):
                                        build_policy=self.build_policy,
                                        always_update_conan_in_docker=self._update_conan_in_docker,
                                        upload=self._upload_enabled(),
+                                       upload_only_recipe=self.upload_only_recipe,
                                        runner=self.runner,
                                        docker_shell=self.docker_shell,
                                        docker_conan_home=self.docker_conan_home,

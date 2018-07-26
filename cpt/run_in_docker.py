@@ -36,10 +36,11 @@ def run():
         tools.save(os.path.join(client_cache.profiles_path, base_profile_name),
                    base_profile_text)
 
-    upload = os.getenv("CPT_UPLOAD_ENABLED", None)
+    upload = os.getenv("CPT_UPLOAD_ENABLED", False)
+    upload_only_recipe = os.getenv("CPT_UPLOAD_ONLY_RECIPE", False)
     runner = CreateRunner(abs_profile_path, reference, conan_api, uploader,
                           args=args,
-                          build_policy=build_policy, printer=printer, upload=upload,
+                          build_policy=build_policy, printer=printer, upload=upload, upload_only_recipe=upload_only_recipe,
                           test_folder=test_folder)
     runner.run()
 
