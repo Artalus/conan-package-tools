@@ -694,7 +694,6 @@ You can upload the generated packages automatically to a conan-server using the 
 
 - User (to generate the packages in that user namespace, e.j: zlib/1.2.11@conan/stable):
 
-
         CONAN_USERNAME: "conan"
 
 - Channel (to generate the packages in that channel namespace, e.j: zlib/1.2.11@conan/testing):
@@ -705,6 +704,9 @@ You can upload the generated packages automatically to a conan-server using the 
 
         CONAN_STABLE_BRANCH_PATTERN: "release/*"
 
+- If you want to only upload only the package recipe and sources, without uploading binaries (e.g. if upload aborts due to binaries being too large, or if you simply do not want to provide binaries for CI builds):
+
+        CONAN_UPLOAD_ONLY_RECIPE: True
 
 
 ## Pagination
@@ -919,8 +921,6 @@ Using **CONAN_CLANG_VERSIONS** env variable in Travis ci or Appveyor:
 - **curpage**: Current page of packages to create
 - **total_pages**: Total number of pages
 - **vs10_x86_64_enabled**: Flag indicating whether or not to build for VS10 64bits. Default [False]
-- **upload_retry**: Num retries in upload in case of failure.             
-- **upload_only_when_stable**: Will try to upload only if the channel is the stable channel. Default [False]
 - **build_types**: List containing specific build types. Default ["Release", "Debug"]
 - **skip_check_credentials**: Conan will skip checking the user credentials before building the packages. And if no user/remote is specified, will try to upload with the
   already stored credentiales in the local cache. Default [False]
@@ -948,6 +948,9 @@ Upload related parameters:
        upload = ("https://api.bintray.com/conan/conan-community/conan", True, "remote1")
        ```
 
+- **upload_retry**: Num retries in upload in case of failure.
+- **upload_only_when_stable**: Will try to upload only if the channel is the stable channel. Default [False]
+- **upload_only_recipe**: Will upload only the package recipe and sources, omitting binaries.
 - **reference**: Reference of the package to upload. Ex: "zlib/1.2.8". If not specified it will be read from the `conanfile.py`.
 - **remote**: Alternative remote name. Default "default"
 - **stable_branch_pattern**: Regular expression, if current git branch matches this pattern, the packages will be uploaded to *stable* channel. Default "master"
@@ -1016,8 +1019,9 @@ This is especially useful for CI integration.
   If a remote name is not specified, `upload_repo` will be used as a remote name.
   If the SSL validation configuration is not specified, it will use `True` by default.
 
-- **CONAN_UPLOAD_RETRY**: If defined, in case of fail retries to upload again the specified times
+- **CONAN_UPLOAD_RETRY**: If defined, in case of fail retries to upload again the specified times.
 - **CONAN_UPLOAD_ONLY_WHEN_STABLE**: If defined, will try to upload the packages only when the current channel is the stable one.
+- **CONAN_UPLOAD_ONLY_RECIPE**: If defined, will upload only the package recipe and sources, omitting binaries.
 
 - **CONAN_SKIP_CHECK_CREDENTIALS**: Conan will skip checking the user credentials before building the packages. And if no user/remote is specified, will try to upload with the
   already stored credentiales in the local cache. Default [False]
